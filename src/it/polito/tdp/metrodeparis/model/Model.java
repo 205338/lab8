@@ -5,12 +5,9 @@ import java.util.Map;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.Graphs;
-import org.jgrapht.WeightedGraph;
 import org.jgrapht.alg.DijkstraShortestPath;
-import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleGraph;
-import org.jgrapht.graph.WeightedMultigraph;
+import org.jgrapht.graph.DefaultDirectedWeightedGraph;
+import org.jgrapht.graph.DefaultWeightedEdge;
 
 import com.javadocmd.simplelatlng.LatLng;
 import com.javadocmd.simplelatlng.LatLngTool;
@@ -27,7 +24,7 @@ public class Model {
 	LineaDAO lineaDAO;
 	ConnessioneDAO connessioneDAO;
 
-	DefaultDirectedGraph<Integer, DefaultEdge> grafoMetro;
+	DefaultDirectedWeightedGraph<Integer, DefaultWeightedEdge> grafoMetro;
 
 	Map<Integer, Fermata> tutteLeFermate;
 	Map<Integer, Connessione> allConnections;
@@ -37,7 +34,7 @@ public class Model {
 		fermataDAO = new FermataDAO();
 		lineaDAO = new LineaDAO();
 		connessioneDAO = new ConnessioneDAO();
-		grafoMetro = new DefaultDirectedGraph<Integer, DefaultEdge>(DefaultEdge.class);
+		grafoMetro = new DefaultDirectedWeightedGraph<Integer, DefaultWeightedEdge>(DefaultWeightedEdge.class);
 	}
 
 	protected void generaGrafo() {
@@ -63,7 +60,7 @@ public class Model {
 		List<Integer> pathList = getShortestPath(idStazioneP, idStazioneA);
 		
 		
-		DefaultEdge e;
+		DefaultWeightedEdge e;
 		@SuppressWarnings("unused")
 		double time = 0;
 		int idConnessionePrecedente = 0;
@@ -90,7 +87,7 @@ public class Model {
 			int idStazioneP = c.getIdStazioneP();
 			int idStazioneA = c.getIdStazioneA();
 
-			DefaultEdge e = grafoMetro.addEdge(idStazioneP, idStazioneA);
+			DefaultWeightedEdge e = grafoMetro.addEdge(idStazioneP, idStazioneA);
 			LatLng coordP = tutteLeFermate.get(idStazioneP).getCoord();
 			LatLng coordA = tutteLeFermate.get(idStazioneA).getCoord();
 
@@ -106,8 +103,8 @@ public class Model {
 
 	public List<Integer> getShortestPath(Integer startVertex, Integer endVertex) {
 		
-		DijkstraShortestPath<Integer, DefaultEdge> dijkstraShortestPath = new DijkstraShortestPath<Integer, DefaultEdge>(grafoMetro, startVertex, endVertex);
-		GraphPath< Integer, DefaultEdge> path = dijkstraShortestPath.getPath();
+		DijkstraShortestPath<Integer, DefaultWeightedEdge> dijkstraShortestPath = new DijkstraShortestPath<Integer, DefaultWeightedEdge>(grafoMetro, startVertex, endVertex);
+		GraphPath< Integer, DefaultWeightedEdge> path = dijkstraShortestPath.getPath();
 		
 		return Graphs.getPathVertexList(path);
 	}
